@@ -117,14 +117,15 @@
           $('#map_canvas').css('height', (h - offsetTop));
         }).resize();
         
-        $(function() {
+                $(function() {
           var myMap = new MapsLib({
-            fusionTableId:      "1m4Ez9xyTGfY2CU6O-UgEcPzlS0rnzLU93e4Faa0",
-            googleApiKey:       "AIzaSyA3FQFrNr5W2OEVmuENqhb2MBB2JabdaOY",
-            locationColumn:     "geometry",
-            map_center:         [41.8781136, -87.66677856445312],
+            fusionTableId:      "1qv_8t4BrqTha6fQPH0HYBP2iMHdWJd7X3mAuxjZb",
+            googleApiKey:       "AIzaSyAF7Syz8InHGYWi_zRABKqmle_6FGzIN40",
+            locationColumn:     "Location",
+            map_center:         [41.789546, -87.599630],
             locationScope:      "chicago"
           });
+
 
           var autocomplete = new google.maps.places.Autocomplete(document.getElementById('search_address'));
       
