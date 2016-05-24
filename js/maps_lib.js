@@ -163,6 +163,23 @@
         self.whereClause = self.locationColumn + " not equal to ''";
         
         //-----custom filters-----
+
+// Added by Eric - Checkbok for Service Category
+var type_column = "'Service Category'";
+var tempWhereClause = [];
+if ( $("#academic-support").is(':checked')) tempWhereClause.push("Academic Support");
+if ( $("#employment").is(':checked')) tempWhereClause.push("Employment");
+if ( $("#housing").is(':checked')) tempWhereClause.push("Housing");
+if ( $("#medical-care").is(':checked')) tempWhereClause.push("Medical Care");
+if ( $("#mental-health").is(':checked')) tempWhereClause.push("Mental Health");
+if ( $("#parent-guardian-support").is(':checked')) tempWhereClause.push("Parent/Guardian Support");
+if ( $("#youth-support").is(':checked')) tempWhereClause.push("Youth Support");
+if ( $("#other").is(':checked')) tempWhereClause.push("Other");
+self.whereClause += " AND " + type_column + " IN ('" + tempWhereClause.join("','") + "')";
+
+
+
+
         //-----end of custom filters-----
 
         self.getgeoCondition(address, function (geoCondition) {
