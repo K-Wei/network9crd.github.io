@@ -39,8 +39,8 @@
         else
             this.addrMarkerImage = "images/blue-pushpin.png"
 
-    	this.currentPinpoint = null;
-    	$("#result_count").html("");
+        this.currentPinpoint = null;
+        $("#result_count").html("");
         
         this.myOptions = {
             zoom: this.defaultZoom,
@@ -99,7 +99,6 @@
         self.fusionTable = self.searchrecords;
         self.searchrecords.setMap(map);
         self.getCount(whereClause);
-        self.getList(whereClause);
     };
 
 
@@ -164,16 +163,22 @@
         self.whereClause = self.locationColumn + " not equal to ''";
         
         //-----custom filters-----
-            var type_column = "'Number'";
-            var searchType = type_column + " IN (-1,";
-            if ( $("#cbType1").is(':checked')) searchType += "1,";
-            if ( $("#cbType2").is(':checked')) searchType += "2,";
-            if ( $("#cbType3").is(':checked')) searchType += "3,";
-            self.whereClause += " AND " + searchType.slice(0, searchType.length - 1) + ")";
 
-            var text_search = $("#text_search").val().replace("'", "\\'");
-            if (text_search != '')
-            self.whereClause += " AND 'Name' contains ignoring case '" + text_search + "'";
+// Added by Eric - Checkbok for Service Category
+var type_column = "'Service Category'";
+var tempWhereClause = [];
+if ( $("#academic-support").is(':checked')) tempWhereClause.push("Academic Support");
+if ( $("#employment").is(':checked')) tempWhereClause.push("Employment");
+if ( $("#housing").is(':checked')) tempWhereClause.push("Housing");
+if ( $("#medical-care").is(':checked')) tempWhereClause.push("Medical Care");
+if ( $("#mental-health").is(':checked')) tempWhereClause.push("Mental Health");
+if ( $("#parent-guardian-support").is(':checked')) tempWhereClause.push("Parent/Guardian Support");
+if ( $("#youth-support").is(':checked')) tempWhereClause.push("Youth Support");
+if ( $("#other").is(':checked')) tempWhereClause.push("Other");
+self.whereClause += " AND " + type_column + " IN ('" + tempWhereClause.join("','") + "')";
+
+
+
 
         //-----end of custom filters-----
 
@@ -244,7 +249,7 @@
         if (query_opts.where && query_opts.where != "") {
             queryStr.push(" WHERE " + query_opts.where);
         }
-        if (query_opts.groupBy && query_opts.roupBy != "") {
+        if (query_opts.groupBy && query_opts.groupBy != "") {
             queryStr.push(" GROUP BY " + query_opts.groupBy);
         }
         if (query_opts.orderBy && query_opts.orderBy != "") {
@@ -310,47 +315,6 @@
         });
         $("#result_box").fadeIn();
     };
-
-     MapsLib.prototype.getList = function(whereClause) {
-    var self = this;
-    var selectColumns = 'Name, Location ';
-
-    self.query({ 
-      select: selectColumns, 
-      where: whereClause 
-    }, function(response) { 
-      self.displayList(response);
-    });
-  },
-
-  MapsLib.prototype.displayList = function(json) {
-    var self = this;
-
-    var data = json['rows'];
-    var template = '';
-
-    var results = $('#results_list');
-    results.hide().empty(); //hide the existing list and empty it out first
-
-    if (data == null) {
-      //clear results list
-      results.append("<span class='lead'>No results found</span>");
-    }
-    else {
-      for (var row in data) {
-        template = "\
-          <div class='row-fluid item-list'>\
-            <div class='span12'>\
-              <strong>" + data[row][0] + "</strong>\
-              <br />\
-              " + data[row][1] + "\
-            </div>\
-          </div>";
-        results.append(template);
-      }
-    }
-    results.fadeIn();
-  },
 
     MapsLib.prototype.addCommas = function (nStr) {
         nStr += '';
