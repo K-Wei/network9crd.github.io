@@ -4,11 +4,32 @@
     <title>Network 9 Resource Directory</title>
     <meta charset='utf-8' />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta content='' name='description' />
-    <meta content='' name='author' />
+    
+    <meta content="Macoupin County’s online source for finding businesses, local governments and community services." name='description' />
+    <meta content='Macoupin County' name='author' />
+
+    <!-- Facebook metadata 
+    <meta content="" property="og:site_name">
+    <meta content="Macoupin Resource Directory" property="og:title">
+    <meta content="article" property="og:type">
+    <meta content="Macoupin County’s online source for finding businesses, local governments and community services." property="og:description">
+    <meta content="http://macoupindirectory.com/index.html" property="og:url">
+    <meta content="http://macoupindirectory.com/images/macoupin-directory.jpg" property="og:image"> -->
+
+    <!-- Twitter metadata 
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="Macoupin Resource Directory">
+    <meta name="twitter:creator" content="@DataMadeCo">
+    <meta name="twitter:title" content="Macoupin Resource Directory">
+    <meta name="twitter:url" content="http://macoupindirectory.com/index.html">
+    <meta name="twitter:description" content="Macoupin County’s online source for finding businesses, local governments and community services.">
+    <meta name="twitter:image:src" content="http://macoupindirectory.com/images/macoupin-directory.jpg"> -->
+
     <!-- Styles -->
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/custom.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script type="text/javascript" src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -22,13 +43,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-          </button> 
-          <a class='navbar-brand' href='index.html'> Network 9 Resource Directory</a>
+          </button>
+          <a class='navbar-brand' id='logo-img' href='index.html'><img src='images/n9.png' title='Network 9 Resource Directory' alt='Network 9 Resource Directory' style='height: 40px;'/>  Network 9 Resource Directory</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class='active'><a href="index.html">Map</a></li>
-            <li><a href="about.html">About</a></li>
+            <li class='active'><a href="index.html"><i class='fa fa-map-marker'></i> Map</a></li>
+            <li><a href="about.html"><i class='fa fa-info-circle'></i> About</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -36,10 +57,13 @@
     <div class='container-fluid'>
       <div class='row'>
         <div class='col-md-4'>
-          <p>This is a demo of <a href='http://derekeder.com'>Derek Eder's</a> <a href='http://derekeder.com/searchable_map_template/'>Searchable Map Template</a> using Google <a href='http://support.google.com/fusiontables/answer/2571232?hl=en&ref_topic=1652595'>Fusion Tables</a>. Use this section to give a little context to your map.</p>
           <div class='well'>
             <h4>
-              Address <small>(<a id='find_me' href='#'>find me</a>)</small>
+              Search by name
+            </h4>
+            <input class='form-control' id='name_search' placeholder="Enter a business or organization name" type='text' />
+            <h4>
+              Near an address <small>(<a id='find_me' href='#'>find me</a>)</small>
             </h4>
             <p>
               <input class='form-control' id='search_address' placeholder='Enter an address or an intersection' type='text' />
@@ -56,107 +80,86 @@
               </label>
             </p>
 
-            <br />
-            <h4>Custom filters and views</h4>
-            <p>Take a look at the <a href='https://github.com/derekeder/FusionTable-Map-Template/wiki/Filter-examples'>wiki</a> to see how to add your own custom filters and views like:</p>
-            <div class='row'>
-              <div class='col-md-6'>
-                <ul>
-                  <li><a href='https://github.com/derekeder/FusionTable-Map-Template/wiki/Filter-examples#wiki-checkboxes'>Checkboxes</a></li>
-                  <li><a href='https://github.com/derekeder/FusionTable-Map-Template/wiki/Filter-examples#wiki-radiobuttons'>Radio buttons</a></li>
-                  <li><a href='https://github.com/derekeder/FusionTable-Map-Template/wiki/Filter-examples#wiki-drop-down-lists'>Drop down lists</a></li>
-                  <li><a href='https://github.com/derekeder/FusionTable-Map-Template/wiki/Filter-examples#wiki-textsearches'>Text searches</a></li>
-                </ul>
-              </div>
-              <div class='col-md-6'>
-                <ul>
-                  <li><a href='https://github.com/derekeder/FusionTable-Map-Template/wiki/Filter-examples#wiki-sliders'>Sliders</a></li>
-                  <li><a href='https://github.com/derekeder/FusionTable-Map-Template/wiki/Filter-examples#wiki-date-sliders'>Date sliders</a></li>
-                  <li><a href='https://github.com/derekeder/FusionTable-Map-Template/wiki/List-search-results'>Results lists</a></li>
-                </ul>
-              </div>
-            </div>
-            <br />
-            <a class='btn btn-primary' id='search' href='#'>
-              <i class='glyphicon glyphicon-search'></i>
-              Search
-            </a>
-            <a class='btn btn-default' id='reset' href='#'>
-              <i class='glyphicon glyphicon-repeat'></i>
-              Reset
-            </a>
+<!-- Added by Eric - Checkboxes for Service Category -->
+            <h4>
+              Service Category 
+            </h4>
+            <ul class='inputs-list unstyled'>
+              <li>
+                <label class='checkbox inline'>
+                  <input type='checkbox' id='academic-support' />
+                  <span class='filter-box filter-red'></span>
+                  Academic Support
+                </label>
+              </li>
+              <li>
+                <label class='checkbox inline'>
+                  <input type='checkbox' id='employment' />
+                  <span class='filter-box filter-orange'></span>
+                  Employment
+                </label>
+              </li>
+              <li>
+                <label class='checkbox inline'>
+                  <input type='checkbox' id='housing' />
+                  <span class='filter-box filter-yellow'></span>
+                  Housing
+                </label>
+              </li>
+              <li>
+                <label class='checkbox inline'>
+                  <input type='checkbox' id='medical-care' />
+                  <span class='filter-box filter-green'></span>
+                  Medical Care
+                </label>
+              </li>
+              <li>
+                <label class='checkbox inline'>
+                  <input type='checkbox' id='mental-health' />
+                  <span class='filter-box filter-skyblue'></span>
+                  Mental Health
+                </label>
+              </li>
+              <li>
+                <label class='checkbox inline'>
+                  <input type='checkbox' id='parent-guardian-support' />
+                  <span class='filter-box filter-purple'></span>
+                  Parent/Guardian Support
+                </label>
+              </li>
+              <li>
+                <label class='checkbox inline'>
+                  <input type='checkbox' id='youth-support' />
+                  <span class='filter-box filter-pink'></span>
+                  Youth Support
+                </label>
+              </li>
+              <li>
+                <label class='checkbox inline'>
+                  <input type='checkbox' id='other' />
+                  <span class='filter-box filter-brown'></span>
+                  Other
+                </label>
+              </li>
+            </ul>
+
+            <p class='pull-left'>
+              <a class='btn btn-primary' id='search' href='#'>
+                <i class='glyphicon glyphicon-search'></i>
+                Search
+              </a>
+              <a class='btn btn-default' id='reset' href='#'>
+                <i class='glyphicon glyphicon-repeat'></i>
+                Reset
+              </a>
+            </p>
+
+            <p class='pull-right'>
+              <a class='btn btn-default' id='viewmode'><i class='fa fa-list'></i> List view</a>
+            </p>
+            <div class='clearfix'></div>
           </div>
           <div class='alert alert-info' id='result_box' ><strong id='result_count'></strong></div>
-
-
-<!-- Added by Eric - Checkbok for Service Category -->
-<h4>
-  Service Category 
-</h4>
-<ul class='inputs-list unstyled'>
-  <li>
-    <label class='checkbox inline'>
-      <input type='checkbox' id='academic-support' />
-      <span class='filter-box filter-red'></span>
-      Academic Support
-    </label>
-  </li>
-  <li>
-    <label class='checkbox inline'>
-      <input type='checkbox' id='employment' />
-      <span class='filter-box filter-orange'></span>
-      Employment
-    </label>
-  </li>
-  <li>
-    <label class='checkbox inline'>
-      <input type='checkbox' id='housing' />
-      <span class='filter-box filter-yellow'></span>
-      Housing
-    </label>
-  </li>
-  <li>
-    <label class='checkbox inline'>
-      <input type='checkbox' id='medical-care' />
-      <span class='filter-box filter-green'></span>
-      Medical Care
-    </label>
-  </li>
-  <li>
-    <label class='checkbox inline'>
-      <input type='checkbox' id='mental-health' />
-      <span class='filter-box filter-skyblue'></span>
-      Mental Health
-    </label>
-  </li>
-  <li>
-    <label class='checkbox inline'>
-      <input type='checkbox' id='parent-guardian-support' />
-      <span class='filter-box filter-purple'></span>
-      Parent/Guardian Support
-    </label>
-  </li>
-  <li>
-    <label class='checkbox inline'>
-      <input type='checkbox' id='youth-support' />
-      <span class='filter-box filter-pink'></span>
-      Youth Support
-    </label>
-  </li>
-  <li>
-    <label class='checkbox inline'>
-      <input type='checkbox' id='other' />
-      <span class='filter-box filter-brown'></span>
-      Other
-    </label>
-  </li>
-</ul>
-
-
-
-
-
-
         </div>
         <div class='col-md-8'>
           <noscript>
@@ -166,10 +169,23 @@
             </div>
           </noscript>
           <div id='map_canvas'></div>
-          <p class='pull-right'>
-            <a href='http://derekeder.com/searchable_map_template/'>Searchable Map Template</a> by <a href='http://derekeder.com'>Derek Eder</a>.
-        </p>
+          <div id='listview' style='display: none;'>
+            <h2>District 9 Resource Directory</h2>
+            <table class='table'>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Address</th>
+                  <th><i class='fa fa-phone'></i> Contact</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody id='results_list'></tbody>
+            </table>
+          </div>
         </div>
+      <p>Created by UChicago <a href="http://politics.uchicago.edu/pages/sce-techteam">TechTeam</a></p>
       </div>
     </div>
 
@@ -187,15 +203,14 @@
           $('#map_canvas').css('height', (h - offsetTop));
         }).resize();
         
-                $(function() {
+        $(function() {
           var myMap = new MapsLib({
             fusionTableId:      "1qv_8t4BrqTha6fQPH0HYBP2iMHdWJd7X3mAuxjZb",
-            googleApiKey:       "AIzaSyAF7Syz8InHGYWi_zRABKqmle_6FGzIN40",
-            locationColumn:     "Location",
+            googleApiKey:       "AIzaSyB4BjFBwCZ24twD-mSSNr_djWWRErc64V4",
+            locationColumn:     "'Full Address'",
             map_center:         [41.789546, -87.599630],
-            locationScope:      "chicago"
+            addrMarkerImage:    ''
           });
-
 
           var autocomplete = new google.maps.places.Autocomplete(document.getElementById('search_address'));
       
@@ -224,6 +239,21 @@
             myMap.reset(); 
             return false;
           });
+
+
+          $('#viewmode').click(function(){
+            if ($('#map_canvas').is(":visible")){
+              $('#viewmode').html("<i class='fa fa-map-marker'></i> Map view");
+              $('#listview').show();
+              $('#map_canvas').hide();
+          }
+
+          else {
+            $('#viewmode').html("<i class='fa fa-list'></i> List view");
+            $('#map_canvas').show();
+              $('#listview').hide();
+          } 
+           });
           
           $(":text").keydown(function(e){
               var key =  e.keyCode ? e.keyCode : e.which;
