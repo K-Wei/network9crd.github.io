@@ -39,8 +39,8 @@
         else
             this.addrMarkerImage = "images/blue-pushpin.png"
 
-        this.currentPinpoint = null;
-        $("#result_count").html("");
+    	this.currentPinpoint = null;
+    	$("#result_count").html("");
         
         this.myOptions = {
             zoom: this.defaultZoom,
@@ -71,6 +71,17 @@
         $("#result_box").hide();
 
         //-----custom initializers-----
+		
+		//Added by Subhodh ------- Spiderify
+		this.oms = new OverlappingMarkerSpiderfier(this.map, {keepSpiderfied: true});
+		this.infoWindow = new google.maps.InfoWindow();
+		this.oms.addListener('click', function(marker, event){
+			this.infoWindow.setContent(marker.desc);
+			this.infoWindow.open(map, marker);
+		});
+		this.oms.addListener('spiderify', function(markers){
+			this.infoWindow.close();
+		});
         //-----end of custom initializers-----
 
         //run the default search when page loads
@@ -96,12 +107,119 @@
             styleId: 2,
             templateId: 2
         });
+		
+		//Added by Subhodh ------ Spiderify
+		self.markers = []
+		self.query({ 
+		  select: "Latitude, Longitude, Organization, 'Branch Name', Location, Phone, Website, 'Service Name', 'Service Category', 'Service Sub-category', Hours, 'In school?', Payment, 'Financial Aid', Gender, Age, Languages, Accessibility, 'Transportation Assistance', 'Intake/Application Process', Description, Other ", 
+		  where: whereClause
+		}, function(response) { 
+			self.qresult = response['rows'];
+
+		  self.oms = new OverlappingMarkerSpiderfier(map, {keepSpiderfied: true});
+			
+		  for(var m = 0; m < self.qresult.length; m++)
+		  {
+                var latitude = self.qresult[m][0];
+                var longitude = self.qresult[m][1];
+                var latlng = new google.maps.LatLng(latitude, longitude);
+                var iconurl = 'http://maps.google.com/mapfiles/ms/micons/';
+                servcat = self.qresult[m][8];
+                if(servcat === 'Academic Support')
+                {
+                    iconurl += 'red-dot.png';
+                }
+                else if(servcat === 'Employment')
+                {
+                    iconurl += 'orange-dot.png';
+                }
+                else if(servcat === 'Housing')
+                {
+                    iconurl += 'yellow-dot.png';
+                }
+                else if(servcat === 'Medical Care')
+                {
+                    iconurl += 'green-dot.png';
+                }
+                else if(servcat === 'Mental Health')
+                {
+                    iconurl += 'ltblue-dot.png';
+                }
+                else if(servcat === 'Parent/Guardian Support')
+                {
+                    iconurl += 'purple-dot.png';
+                }
+                else if(servcat === 'Youth Support')
+                {
+                    iconurl += 'pink-dot.png';
+                }
+                else
+                {
+                    iconurl += 'blue-dot.png'
+                }
+                gmarker = new google.maps.Marker({
+                    position: latlng,
+                    icon: iconurl,
+                    org: self.qresult[m][2],
+                    branch: self.qresult[m][3],
+                    loc: self.qresult[m][4],
+                    ph: self.qresult[m][5],
+                    web: self.qresult[m][6],
+                    serv: self.qresult[m][7],
+                    cat: self.qresult[m][8],
+                    subcat: self.qresult[m][9],
+                    hrs: self.qresult[m][10],
+                    sch: self.qresult[m][11],
+                    pay: self.qresult[m][12],
+                    finaid: self.qresult[m][13],
+                    gender: self.qresult[m][14],
+                    age: self.qresult[m][15],
+                    idioma: self.qresult[m][16],
+                    access: self.qresult[m][17],
+                    transport: self.qresult[m][18],
+                    app: self.qresult[m][19],
+                    desc: self.qresult[m][20],
+                    other: self.qresult[m][21],
+                    map: map
+                });
+                self.markers.push(gmarker);
+                self.oms.addMarker(gmarker);
+		  }
+
+          self.infoWindow = new google.maps.InfoWindow();
+          self.oms.addListener('click', function(marker, event){
+              var contentString = '<b>Organization:</b> ' + marker.org + '<br>'+
+                    '<b>Branch Name:</b> ' + marker.branch + '<br>'+
+                    '<b>Location:</b> ' + marker.loc + '<br>'+
+                    '<b>Phone:</b> ' + marker.ph + '<br>'+
+                    '<b>Website:</b> ' + marker.web + '<br>'+
+                    '<b>Service Name:</b> ' + marker.serv + '<br>' +
+                    '<b>Service Category:</b> ' + marker.cat + '<br>' +
+                    '<b>Service Sub-category:</b> ' + marker.subcat + '<br>' +
+                    '<b>Hours:</b> ' + marker.hrs + '<br>' +
+                    '<b>In School?:</b> ' + marker.sch + '<br>' + 
+                    '<b>Payment:</b> ' + marker.pay + '<br>' +
+                    '<b>Financial Aid:</b> ' + marker.finaid + '<br>' +
+                    '<b>Gender:</b> ' + marker.gender + '<br>' +
+                    '<b>Age:</b> ' + marker.age + '<br>' +
+                    '<b>Languages:</b> ' + marker.idioma + '<br>' + 
+                    '<b>Accessibility:</b> ' + marker.access + '<br>' + 
+                    '<b>Transportation Assistance:</b> ' + marker.transport + '<br>' +
+                    '<b>Intake/Application Process:</b> ' + marker.app + '<br>' + 
+                    '<b>Description:</b> ' + marker.desc + '<br>' +
+                    '<b>Other:</b> ' + marker.other;
+              self.infoWindow.setContent(contentString);
+              self.infoWindow.open(map, marker);
+          });
+          self.oms.addListener('spiderify', function(markers){
+                self.infoWindow.close();
+          });
+		  
+		});
         self.fusionTable = self.searchrecords;
-        self.searchrecords.setMap(map);
+        //self.searchrecords.setMap(map);
         self.getCount(whereClause);
     };
-
-
     MapsLib.prototype.getgeoCondition = function (address, callback) {
         var self = this;
         if (address !== "") {
@@ -164,18 +282,18 @@
         
         //-----custom filters-----
 
-// Added by Eric - Checkbok for Service Category
-var type_column = "'Service Category'";
-var tempWhereClause = [];
-if ( $("#academic-support").is(':checked')) tempWhereClause.push("Academic Support");
-if ( $("#employment").is(':checked')) tempWhereClause.push("Employment");
-if ( $("#housing").is(':checked')) tempWhereClause.push("Housing");
-if ( $("#medical-care").is(':checked')) tempWhereClause.push("Medical Care");
-if ( $("#mental-health").is(':checked')) tempWhereClause.push("Mental Health");
-if ( $("#parent-guardian-support").is(':checked')) tempWhereClause.push("Parent/Guardian Support");
-if ( $("#youth-support").is(':checked')) tempWhereClause.push("Youth Support");
-if ( $("#other").is(':checked')) tempWhereClause.push("Other");
-self.whereClause += " AND " + type_column + " IN ('" + tempWhereClause.join("','") + "')";
+		// Added by Eric - Checkbok for Service Category
+		var type_column = "'Service Category'";
+		var tempWhereClause = [];
+		if ( $("#academic-support").is(':checked')) tempWhereClause.push("Academic Support");
+		if ( $("#employment").is(':checked')) tempWhereClause.push("Employment");
+		if ( $("#housing").is(':checked')) tempWhereClause.push("Housing");
+		if ( $("#medical-care").is(':checked')) tempWhereClause.push("Medical Care");
+		if ( $("#mental-health").is(':checked')) tempWhereClause.push("Mental Health");
+		if ( $("#parent-guardian-support").is(':checked')) tempWhereClause.push("Parent/Guardian Support");
+		if ( $("#youth-support").is(':checked')) tempWhereClause.push("Youth Support");
+		if ( $("#other").is(':checked')) tempWhereClause.push("Other");
+		self.whereClause += " AND " + type_column + " IN ('" + tempWhereClause.join("','") + "')";
 
 
 

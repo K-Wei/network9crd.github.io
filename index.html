@@ -13,6 +13,11 @@
     <!--[if lt IE 9]>
       <script type="text/javascript" src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+	
+	<!-- Added by Subhodh - Spiderify -->
+	<script src="http://maps.googleapis.com/maps/api/js"></script>
+	<script src="js/overlappingMarkerSpiderfier.js"></script>
+	
   </head>
   <body>
     <div class='navbar navbar-default navbar-static-top'>
@@ -146,7 +151,7 @@
   <li>
     <label class='checkbox inline'>
       <input type='checkbox' id='other' />
-      <span class='filter-box filter-brown'></span>
+      <span class='filter-box filter-blue'></span>
       Other
     </label>
   </li>
@@ -176,8 +181,9 @@
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="js/jquery.address.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&libraries=places"></script>
+    <!--Commented by Subhodh - <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&libraries=places"></script>-->
     <script type="text/javascript" src="js/maps_lib.js"></script>
+	<script src="js/overlappingMarkerSpiderfier.js"></script>
     <script type='text/javascript'>
       //<![CDATA[
         $(window).resize(function () {
@@ -189,7 +195,7 @@
         
                 $(function() {
           var myMap = new MapsLib({
-            fusionTableId:      "1qv_8t4BrqTha6fQPH0HYBP2iMHdWJd7X3mAuxjZb",
+            fusionTableId:      "14D2Ie9US832vlDk435aUkRIIg_eqtbcAq0GloIhL", //Need to change this fusiontableid to real one
             googleApiKey:       "AIzaSyAF7Syz8InHGYWi_zRABKqmle_6FGzIN40",
             locationColumn:     "Location",
             map_center:         [41.789546, -87.599630],
