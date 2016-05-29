@@ -39,8 +39,8 @@
         else
             this.addrMarkerImage = "images/blue-pushpin.png"
 
-    	this.currentPinpoint = null;
-    	$("#result_count").html("");
+        this.currentPinpoint = null;
+        $("#result_count").html("");
         
         this.myOptions = {
             zoom: this.defaultZoom,
@@ -99,6 +99,7 @@
         self.fusionTable = self.searchrecords;
         self.searchrecords.setMap(map);
         self.getCount(whereClause);
+        self.getList(whereClause);
     };
 
 
