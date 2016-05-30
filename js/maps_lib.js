@@ -109,6 +109,7 @@
         });
 		
 		//Added by Subhodh ------ Spiderify
+		map = new google.maps.Map($("#map_canvas")[0], this.myOptions);
 		self.markers = []
 		self.query({ 
 		  select: "Latitude, Longitude, Organization, 'Branch Name', Location, Phone, Website, 'Service Name', 'Service Category', 'Service Sub-category', Hours, 'In school?', Payment, 'Financial Aid', Gender, Age, Languages, Accessibility, 'Transportation Assistance', 'Intake/Application Process', Description, Other ", 
