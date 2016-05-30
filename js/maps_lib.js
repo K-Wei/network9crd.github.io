@@ -4,8 +4,8 @@
 
         options = options || {};
 
-        this.recordName = options.recordName || "result"; //for showing a count of results
-        this.recordNamePlural = options.recordNamePlural || "results";
+        this.recordName = options.recordName || "location"; //for showing a count of results
+        this.recordNamePlural = options.recordNamePlural || "locations";
         this.searchRadius = options.searchRadius || 805; //in meters ~ 1/2 mile
 
         // the encrypted Table ID of your Fusion Table (found under File => About)
@@ -30,13 +30,10 @@
         this.map_centroid = new google.maps.LatLng(options.map_center[0], options.map_center[1]);
         
         // marker image for your searched address
-        if (typeof options.addrMarkerImage !== 'undefined') {
-            if (options.addrMarkerImage != "")
-                this.addrMarkerImage = options.addrMarkerImage;
-            else
-                this.addrMarkerImage = ""
-        }
+        if (options.addrMarkerImage != "")
+            this.addrMarkerImage = options.addrMarkerImage;
         else
+
             this.addrMarkerImage = "images/blue-pushpin.png"
 
     	this.currentPinpoint = null;
@@ -60,6 +57,7 @@
         self.searchrecords = null;
 
         //reset filters
+        $("#name_search").val(self.convertToPlainString($.address.parameter('Organization')));
         $("#search_address").val(self.convertToPlainString($.address.parameter('address')));
         var loadRadius = self.convertToPlainString($.address.parameter('radius'));
         if (loadRadius != "") 
@@ -283,8 +281,26 @@
         self.whereClause = self.locationColumn + " not equal to ''";
         
         //-----custom filters-----
-
-		// Added by Eric - Checkbok for Service Category
+        // Added by Eric - Checkbok for Service Category
+        var type_column = "'Service Category'";
+        var tempWhereClause = [];
+        if ( $("#academic-support").is(':checked')) tempWhereClause.push("Academic Support");
+        if ( $("#employment").is(':checked')) tempWhereClause.push("Employment");
+        if ( $("#housing").is(':checked')) tempWhereClause.push("Housing");
+        if ( $("#medical-care").is(':checked')) tempWhereClause.push("Medical Care");
+        if ( $("#mental-health").is(':checked')) tempWhereClause.push("Mental Health");
+        if ( $("#parent-guardian-support").is(':checked')) tempWhereClause.push("Parent/Guardian Support");
+        if ( $("#youth-support").is(':checked')) tempWhereClause.push("Youth Support");
+        if ( $("#other").is(':checked')) tempWhereClause.push("Other");
+        self.whereClause += " AND " + type_column + " IN ('" + tempWhereClause.join("','") + "')";
+        // var type_column = "'Type ID'";
+        // var searchType = type_column + " IN (-1,";
+        // if ( $("#cbType1").is(':checked')) searchType += "1,";
+        // if ( $("#cbType2").is(':checked')) searchType += "2,";
+        // if ( $("#cbType3").is(':checked')) searchType += "3,";
+        // self.whereClause += " AND " + searchType.slice(0, searchType.length - 1) + ")";
+        
+		// Added by Eric - Checkbox for Service Category
 		var type_column = "'Service Category'";
 		var tempWhereClause = [];
 		if ( $("#academic-support").is(':checked')) tempWhereClause.push("Academic Support");
@@ -298,7 +314,11 @@
 		self.whereClause += " AND " + type_column + " IN ('" + tempWhereClause.join("','") + "')";
 
 
-
+        var name_search = $("#name_search").val().replace("'", "\\'");
+        if (name_search != '') {
+            self.whereClause += " AND 'Organization' contains ignoring case '" + name_search + "'";
+            $.address.parameter('Organization', encodeURIComponent(name_search));
+        }
 
         //-----end of custom filters-----
 
@@ -310,6 +330,8 @@
     };
 
     MapsLib.prototype.reset = function () {
+        $.address.parameter('Organization','');
+        $("#name_search").val("");
         $.address.parameter('address','');
         $.address.parameter('radius','');
         window.location.reload();
@@ -369,7 +391,7 @@
         if (query_opts.where && query_opts.where != "") {
             queryStr.push(" WHERE " + query_opts.where);
         }
-        if (query_opts.groupBy && query_opts.groupBy != "") {
+        if (query_opts.groupBy && query_opts.roupBy != "") {
             queryStr.push(" GROUP BY " + query_opts.groupBy);
         }
         if (query_opts.orderBy && query_opts.orderBy != "") {
@@ -387,10 +409,11 @@
             key: self.googleApiKey
         };
         $.ajax({
+
             url: [theurl.base, encodeURIComponent(theurl.queryStr.join(" ")), "&key=", theurl.key].join(''),
             dataType: "json"
         }).done(function (response) {
-            //console.log(response);
+            console.log(response);
             if (callback) callback(response);
         }).fail(function(response) {
             self.handleError(response);
@@ -435,6 +458,65 @@
         });
         $("#result_box").fadeIn();
     };
+
+    MapsLib.prototype.getList = function(whereClause) {
+        var self = this;
+        var selectColumns = "Organization, Location, 'Service Name', Phone, Website, Description";
+
+        self.query({
+            select: selectColumns,
+            where: whereClause,
+            orderBy: 'Organization'
+        }, function (json) {
+            self.displayList(json);
+        });
+    }
+
+    MapsLib.prototype.displayList = function(json) {
+        var self = this;
+        
+        var data = json['rows'];
+        var template = '';
+
+        var results = $('#results_list');
+        results.hide().empty(); //hide the existing list and empty it out first
+
+        if (data == null) {
+            //clear results list
+            results.append("<tr><td colspan='6'>No results found</td></tr>");
+        }
+        else {
+            for (var row in data) {
+                // var type_color = 'green';
+                // if (data[row][10] == '3') type_color = 'blue';
+                // if (data[row][10] == '2') type_color = 'red';
+                template = "\
+                  <tr>\
+                      <td><span class='filter-box filter-" + "'></span></td>\
+                      <td><strong>" + data[row][0] + "</strong><br /><small>" + data[row][2] + "<br />" + "</small></td>\
+                      <td>" + data[row][1] + "</td>\
+                      <td>";
+
+                if (data[row][3] != "") 
+                    template += "<b>Phone:</b> " + data[row][3] + "<br>";
+                // if (data[row][5] != "") 
+                //     template += "<b>Phone secondary:</b> " + data[row][5] + "<br>";
+                // if (data[row][6] != "") 
+                //     template += "<b>Fax:</b> " + data[row][6] + "<br>";
+                if (data[row][4] != "") 
+                    template += "<b>Web:</b> <a href='http://" + data[row][4] + "' target='_blank'>" + data[row][4] + "</a><br>";
+                // if (data[row][8] != "") 
+                //     template += "<b>Email:</b> <a href='mailto:" + data[row][8] + "' target='_blank'>" + data[row][8] + "</a><br>";
+ 
+                template += "\
+                      </td>\
+                      <td>" + data[row][5] + "</td>\
+                  </tr>";
+                results.append(template);
+            }
+        }
+        results.fadeIn();
+    }
 
     MapsLib.prototype.addCommas = function (nStr) {
         nStr += '';
