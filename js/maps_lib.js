@@ -71,6 +71,7 @@
         //-----custom initializers-----
 		
 		//Added by Subhodh ------- Spiderify
+		this.markers = [];
 		this.oms = new OverlappingMarkerSpiderfier(this.map, {keepSpiderfied: true});
 		this.infoWindow = new google.maps.InfoWindow();
 		this.oms.addListener('click', function(marker, event){
@@ -107,7 +108,11 @@
         });
 		
 		//Added by Subhodh ------ Spiderify
-		map = new google.maps.Map($("#map_canvas")[0], this.myOptions);
+		//map = new google.maps.Map($("#map_canvas")[0], this.myOptions);
+		for(var m = 0; m < self.markers.length; m++)
+		{
+			self.markers[m].setMap(null);
+		}
 		self.markers = []
 		self.query({ 
 		  select: "Latitude, Longitude, Organization, 'Branch Name', Location, Phone, Website, 'Service Name', 'Service Category', 'Service Sub-category', Hours, 'In school?', Payment, 'Financial Aid', Gender, Age, Languages, Accessibility, 'Transportation Assistance', 'Intake/Application Process', Description, Other ", 
