@@ -220,7 +220,7 @@
         self.fusionTable = self.searchrecords;
         // self.searchrecords.setMap(map);
         self.getCount(whereClause);
-        // self.getList(whereClause);
+        self.getList(whereClause);
     };
     MapsLib.prototype.getgeoCondition = function (address, callback) {
         var self = this;
