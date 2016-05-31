@@ -111,11 +111,11 @@
 		
 		//Added by Subhodh ------ Spiderify
 		//map = new google.maps.Map($("#map_canvas")[0], this.myOptions);
-		for(var m = 0; m < self.markers.length; m++)
+		/*for(var m = 0; m < self.markers.length; m++)
 		{
 			self.markers[m].setMap(null);
 		}
-		self.markers = []
+		self.markers = []*/
 		self.query({ 
 		  select: "Latitude, Longitude, Organization, 'Branch Name', Location, Phone, Website, 'Service Name', 'Service Category', 'Service Sub-category', Hours, 'In school?', Payment, 'Financial Aid', Gender, Age, Languages, Accessibility, 'Transportation Assistance', 'Intake/Application Process', Description, Other ", 
 		  where: whereClause
@@ -123,7 +123,8 @@
 			self.qresult = response['rows'];
 
 		  self.oms = new OverlappingMarkerSpiderfier(map, {keepSpiderfied: true});
-			
+		
+		  var toPlace = [];
 		  for(var m = 0; m < self.qresult.length; m++)
 		  {
                 var latitude = self.qresult[m][0];
@@ -163,6 +164,8 @@
                 {
                     iconurl += 'blue-dot.png'
                 }
+				
+				
                 gmarker = new google.maps.Marker({
                     position: latlng,
                     icon: iconurl,
@@ -185,12 +188,49 @@
                     transport: self.qresult[m][18],
                     app: self.qresult[m][19],
                     desc: self.qresult[m][20],
-                    other: self.qresult[m][21],
-                    map: map
+                    other: self.qresult[m][21]
                 });
-                self.markers.push(gmarker);
+				
+                
                 self.oms.addMarker(gmarker);
+				//gmarker.setMap(map);
+				//self.markers.push(gmarker);
+				toPlace.push(gmarker);
 		  }
+		  
+			for(var n = 0; n < self.markers.length; n++)
+			{
+				var needed = false;
+				for(var m = 0; m < toPlace.length; m++)
+				{
+					if(toPlace[m] === self.markers[n])
+					{
+						needed = true;
+					}
+				}
+				if(needed === false)
+				{
+					self.markers[n].setMap(null);
+				}
+			}
+			  
+			for(var m = 0; m < toPlace.length; m++)
+			{
+				var mapped = false;
+				for(var n = 0; n < self.markers.length; n++)
+				{
+					if(toPlace[m] === self.markers[n])
+					{
+						mapped = true;
+					}
+				}
+				if(mapped === false)
+				{
+					console.log("Mapping new stuff")
+					toPlace[m].setMap(map);
+					self.markers.push(toPlace[m]);
+				}
+			}
 
           self.infoWindow = new google.maps.InfoWindow();
           self.oms.addListener('click', function(marker, event){
